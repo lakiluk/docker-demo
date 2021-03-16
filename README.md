@@ -20,7 +20,9 @@ docker run --name cities-app -p 4000:8080 --network cities-network -e CITIES_DB_
 -----
 
 docker-compose up
+
 docker-compose up -d
+
 docker-compose down
 
 ----
