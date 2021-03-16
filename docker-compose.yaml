@@ -1,0 +1,19 @@
+version: "3.8"
+services:
+  cities-app:
+    image: lukaszdworski/cities-app:1
+    environment:
+      CITIES_DB_HOST: cities-db
+      CITIES_DB_PORT: 5432
+    ports:
+      - '4000:8080'
+  cities-db:
+    image: postgres:13.2
+    environment:
+      POSTGRES_USER: luke
+      POSTGRES_PASSWORD: skywalker
+      POSTGRES_DB: cities
+    volumes:
+      - cities-volume:/var/lib/postgresql/data
+volumes:
+  cities-volume:

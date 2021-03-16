@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cities-db-service
+spec:
+  selector:
+    app: cities-database
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: 'TCP'
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cities-db-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cities-database
+  template:
+    metadata:
+      labels:
+        app: cities-database
+    spec:
+      containers:
+        - name: cities-db
+          image: postgres:13.2
+          env:
+            - name: POSTGRES_USER
+              value: 'luke'
+            - name: POSTGRES_PASSWORD
+              value: 'skywalker'
+            - name: POSTGRES_DB
+              value: 'cities'
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: cities-db-volume
+      volumes:
+        - name: cities-db-volume
+          hostPath:
+            path: /home/luke/docker-demo/data-demo
+            type: DirectoryOrCreate

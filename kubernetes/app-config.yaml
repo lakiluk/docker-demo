@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: cities-app-service
+spec:
+  selector:
+    app: cities-app
+  ports:
+    - port: 4000
+      targetPort: 8080
+      protocol: 'TCP'
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cities-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: cities-app
+  template:
+    metadata:
+      labels:
+        app: cities-app
+    spec:
+      containers:
+        - name: cities-app
+          image: lukaszdworski/cities-app:1
+          imagePullPolicy: Always
+          env:
+            - name: CITIES_DB_HOST
+              value: 'cities-db-service.default'
+            - name: CITIES_DB_PORT
+              value: '5432'
+          livenessProbe:
+            httpGet:
+              port: 8080
+              path: /actuator/health
+            initialDelaySeconds: 20
+            periodSeconds: 5
